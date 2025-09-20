@@ -10,7 +10,7 @@ export default function ErrorPage({ message }: { message: string }) {
       <Button
       shape="square"
         appearance="primary"
-        onClick={() => logout({})}
+        onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
       >
         Go back to login
       </Button>
