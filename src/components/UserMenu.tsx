@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button } from "@polyutils/components";
 
 export default function UserMenu() {
   const { user, logout } = useAuth0();
@@ -28,14 +29,14 @@ export default function UserMenu() {
 
   return (
     <div className="user-menu" ref={ref}>
-      <button
-        type="button"
+      <Button
         className="user-avatar-btn"
+        appearance="transparent"
+        type="button"
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        title={user.name || user.email || "Account"}
-      >
+        title={user.name || user.email || "Account"}>
         {user.picture ? (
           <img src={user.picture} alt="User avatar" className="user-avatar-img" />
         ) : (
@@ -43,19 +44,25 @@ export default function UserMenu() {
             {(user.name || "?").slice(0, 1)}
           </span>
         )}
-      </button>
+      </Button>
       <div className={`user-dropdown ${open ? "is-open" : ""}`.trim()} role="dialog" aria-label="User menu">
         <div className="user-dropdown__header" title={user.email || user.name || ""}>
           {user.name || user.email || "Account"}
         </div>
-        <button
+        <Button
           type="button"
-          className="user-dropdown__item"
-          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-        >
+          appearance="subtle"
+          size="small"
+          shape="square"
+          style={{
+            justifyContent: "flex-start",
+            fontSize: "inherit",
+          }}
+          pressEffect={false}
+          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>
           <i className="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
           <span>Sign out</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

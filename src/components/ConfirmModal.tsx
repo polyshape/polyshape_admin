@@ -1,3 +1,4 @@
+import { Button } from "@polyutils/components";
 import Modal from "./Modal";
 
 type Props = {
@@ -24,12 +25,12 @@ export default function ConfirmModal({
       title={title}
       footer={
         <>
-          <button className="btn btn-default" onClick={onCancel} disabled={busy}>
+          <Button appearance="default" size="medium" shape="square" onClick={onCancel} disabled={busy}>
             Cancel
-          </button>
-          <button className="btn btn-primary" onClick={onConfirm} disabled={busy}>
+          </Button>
+          <Button appearance="primary" size="medium" shape="square" onClick={onConfirm} disabled={busy}>
             Delete
-          </button>
+          </Button>
         </>
       }
     >

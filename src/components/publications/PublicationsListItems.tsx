@@ -1,5 +1,6 @@
 import { lastPathSegment } from "../../util/pathUtils";
 import type { EnrichedItem } from "../../controllers/publicationsController";
+import { Button } from "@polyutils/components";
 
 type Props = {
   items: EnrichedItem[];
@@ -21,26 +22,30 @@ export default function PublicationsListItems({
         const d = item.detail;
         return (
           <li key={key} className="list-item pub-item">
-            <button
+            <Button
               type="button"
+              iconOnly
               className="icon-btn item-edit"
+              size="small"
+              shape="square"
+              appearance="transparent"
               aria-label="Edit publication"
               title="Edit publication"
               onClick={() => onEdit(item)}
-            >
-              <i className="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-            </button>
-            <button
+              icon={<i className="fa-solid fa-pen-to-square" aria-hidden="true"></i>}/>
+            <Button
               type="button"
+              iconOnly
               className="icon-btn item-trash"
+              size="small"
+              shape="square"
+              appearance="transparent"
               aria-label="Delete publication"
               title="Delete publication"
               onClick={() => onDeleteRequest(item.pathname)}
               aria-busy={deleting.has(item.pathname)}
               disabled={deleting.has(item.pathname)}
-            >
-              <i className="fa-solid fa-trash" aria-hidden="true"></i>
-            </button>
+              icon={<i className="fa-solid fa-trash" aria-hidden="true"></i>}/>
 
             <h3 className="item-pathname pub-pathname" title={item.pathname}>
               {lastPathSegment(item.pathname)}

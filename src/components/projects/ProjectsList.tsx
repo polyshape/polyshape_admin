@@ -10,13 +10,14 @@ import { lastPathSegment } from "../../util/pathUtils";
 import { useProjectsActions } from "./useProjectsActions";
 import ConfirmModal from "../ConfirmModal";
 import ListLayout from "../ListLayout";
-import LoadingOverlay from "../LoadingOverlay";
 import { joinContentForEdit } from "../../util/normalizeContent";
+import { useGlobalLoading } from "../../contexts/useGlobalLoading";
 
 const isAbortError = (e: unknown): e is DOMException =>
   e instanceof DOMException && e.name === "AbortError";
 
 export default function ProjectsList() {
+  const { startLoading, stopLoading } = useGlobalLoading();
   const [items, setItems] = useState<EnrichedItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<Set<string>>(new Set());
@@ -67,11 +68,14 @@ export default function ProjectsList() {
     setDeleting,
     setConfirmPath,
     searchQuery,
+    startLoading,
+    stopLoading,
   });
 
   useEffect(() => {
     const controller = new AbortController();
     const load = async () => {
+      startLoading();
       try {
         setError(null);
         const enriched = await fetchProjects({ signal: controller.signal });
@@ -79,11 +83,13 @@ export default function ProjectsList() {
       } catch (e: unknown) {
         if (isAbortError(e)) return;
         setError(e instanceof Error ? e.message : "Failed to load");
+      } finally {
+        stopLoading();
       }
     };
     load();
     return () => controller.abort();
-  }, []);
+  }, [startLoading, stopLoading]);
 
   const isDeleting = deleting.size > 0;
 
@@ -117,7 +123,7 @@ export default function ProjectsList() {
     />
   );
 
-  if (items === null)
+  if (items === null) {
     return (
       <>
         <ProjectsToolbar
@@ -131,10 +137,9 @@ export default function ProjectsList() {
           }}
           isDeleting={isDeleting}
         />
-        {/* Full-screen loading overlay while fetching list */}
-        <LoadingOverlay open label="Loading projects" />
       </>
     );
+  }
 
   if (error) {
     return <p style={{ color: "crimson" }}>Error: {error}</p>;
@@ -155,8 +160,6 @@ export default function ProjectsList() {
           isDeleting={isDeleting}
         />
       }
-      isDeleting={isDeleting}
-      creating={creating}
       totalPages={totalPages}
       currentPage={currentPage}
       setPage={setPage}

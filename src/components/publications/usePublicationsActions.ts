@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, type Dispatch, type SetStateAction, type FormEvent } from "react";
 import { usePagination } from "@polyutils/components";
 import {
   fetchPublications,
@@ -18,21 +18,22 @@ type Params = {
   setAddOpen: (v: boolean) => void;
   resetAddForm: () => void;
 
-  // form state (publications schema)
   formTitle: string;
   formContent: string;
   formDate: string;
-  formUrl: string;       // publicationUrl
-  formAuthors: string;   // comma-separated
+  formUrl: string;
+  formAuthors: string;
   formVenue: string;
 
   editId: string | null;
   setFormError: (msg: string | null) => void;
 
-  setDeleting: React.Dispatch<React.SetStateAction<Set<string>>>;
+  setDeleting: Dispatch<SetStateAction<Set<string>>>;
   setConfirmPath: (v: string | null) => void;
 
   searchQuery: string;
+  startLoading: () => void;
+  stopLoading: () => void;
 };
 
 export function usePublicationsActions({
@@ -53,14 +54,15 @@ export function usePublicationsActions({
   setDeleting,
   setConfirmPath,
   searchQuery,
+  startLoading,
+  stopLoading,
 }: Params) {
-  // filter + sort
   const filteredSorted = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     const byDate = (d?: string): number => {
       if (!d) return 0;
       const t = Date.parse(d);
-      return isNaN(t) ? 0 : t;
+      return Number.isNaN(t) ? 0 : t;
     };
     const base = [...(items ?? [])].sort(
       (a, b) => byDate(b.detail?.date) - byDate(a.detail?.date),
@@ -71,7 +73,6 @@ export function usePublicationsActions({
     );
   }, [items, searchQuery]);
 
-  // pagination
   const PAGE_SIZE = 5;
   const {
     visible: paged,
@@ -80,8 +81,8 @@ export function usePublicationsActions({
     setPage,
   } = usePagination(filteredSorted, PAGE_SIZE);
 
-  // refresh
   const refresh = useCallback(async () => {
+    startLoading();
     try {
       setError(null);
       setItems(null);
@@ -89,11 +90,12 @@ export function usePublicationsActions({
       setItems(enriched);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to refresh");
+    } finally {
+      stopLoading();
     }
-  }, [setItems, setError]);
+  }, [setItems, setError, startLoading, stopLoading]);
 
-  // create/update
-  const handlePublicationFormSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePublicationFormSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError(null);
 
@@ -102,9 +104,9 @@ export function usePublicationsActions({
       return;
     }
 
+    startLoading();
     setCreating(true);
     try {
-      // normalize & validate publicationUrl
       const rawUrl = formUrl.trim();
       let normalizedUrl = rawUrl;
       const hasScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(rawUrl);
@@ -116,7 +118,6 @@ export function usePublicationsActions({
         return;
       }
 
-      // normalize content & authors
       const contentArray = normalizeContent(formContent);
       const authorsArr = formAuthors
         .split(",")
@@ -148,6 +149,7 @@ export function usePublicationsActions({
       resetAddForm();
     } finally {
       setCreating(false);
+      stopLoading();
     }
   }, [
     formTitle,
@@ -162,11 +164,13 @@ export function usePublicationsActions({
     refresh,
     setAddOpen,
     resetAddForm,
+    startLoading,
+    stopLoading,
   ]);
 
-  // delete
   const handleDelete = useCallback(async (pathname: string) => {
     const filename = lastPathSegment(pathname);
+    startLoading();
     setDeleting((prev) => new Set(prev).add(pathname));
     try {
       await deletePublication(filename);
@@ -181,8 +185,9 @@ export function usePublicationsActions({
         return next;
       });
       setConfirmPath(null);
+      stopLoading();
     }
-  }, [setDeleting, setItems, setError, setConfirmPath]);
+  }, [setDeleting, setItems, setError, setConfirmPath, startLoading, stopLoading]);
 
   return {
     paged,
@@ -194,3 +199,4 @@ export function usePublicationsActions({
     handleDelete,
   };
 }
+

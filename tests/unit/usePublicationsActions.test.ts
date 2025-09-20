@@ -48,6 +48,8 @@ type HookParams = {
   setDeleting: (updater: Set<string> | ((prev: Set<string>) => Set<string>)) => void;
   setConfirmPath: (v: string | null) => void;
   searchQuery: string;
+  startLoading: () => void;
+  stopLoading: () => void;
 };
 
 function renderHook(params: HookParams) {
@@ -96,8 +98,16 @@ describe("usePublicationsActions", () => {
     let lastItems: EnrichedItem[] | null = [];
     let creating = false;
     let formError: string | null = null;
+    let loadingCount = 0;
 
-    const params = {
+    const startLoading = vi.fn(() => {
+      loadingCount += 1;
+    });
+    const stopLoading = vi.fn(() => {
+      loadingCount = Math.max(0, loadingCount - 1);
+    });
+
+    const params: HookParams = {
       items: [] as EnrichedItem[] | null,
       setItems: vi.fn((v: EnrichedItem[] | null) => {
         lastItems = v;
@@ -111,20 +121,20 @@ describe("usePublicationsActions", () => {
       setAddOpen: vi.fn(),
       resetAddForm: vi.fn(),
 
-      formTitle: "",
-      formContent: "",
-      formDate: "",
-      formUrl: "",
-      formAuthors: "",
-      formVenue: "",
+      formTitle: '',
+      formContent: '',
+      formDate: '',
+      formUrl: '',
+      formAuthors: '',
+      formVenue: '',
 
-      editId: null as string | null,
+      editId: null,
       setFormError: vi.fn((m: string | null) => {
         formError = m;
       }),
 
       setDeleting: vi.fn((updater: Set<string> | ((prev: Set<string>) => Set<string>)) => {
-        if (typeof updater === "function") {
+        if (typeof updater === 'function') {
           deleting = updater(deleting);
         } else {
           deleting = updater;
@@ -134,7 +144,9 @@ describe("usePublicationsActions", () => {
         confirmPath = v;
       }),
 
-      searchQuery: "",
+      searchQuery: '',
+      startLoading,
+      stopLoading,
     };
 
     Object.assign(params, overrides);
@@ -142,7 +154,7 @@ describe("usePublicationsActions", () => {
     return {
       params,
       get state() {
-        return { deleting, confirmPath, lastError, lastItems, creating, formError };
+        return { deleting, confirmPath, lastError, lastItems, creating, formError, loadingCount };
       },
     };
   }
@@ -467,3 +479,12 @@ describe("usePublicationsActions", () => {
     unmount();
   });
 });
+
+
+
+
+
+
+
+
+

@@ -1,3 +1,4 @@
+import { Button } from "@polyutils/components";
 import React from "react";
 
 type Props = {
@@ -87,10 +88,15 @@ export default function PublicationsForm({
               }}
               required
             />
-            <button
+            <Button
               type="button"
-              className="icon-btn date-btn"
+              size="small"
+              shape="square"
+              appearance="subtle"
               aria-label="Open date picker"
+              className="date-btn"
+              iconOnly
+              icon={<i className="fa-solid fa-calendar-days" aria-hidden="true"></i>}
               onPointerDown={(e) => {
                 e.preventDefault();
                 const input = e.currentTarget.previousElementSibling as HTMLInputElement | null;
@@ -100,10 +106,7 @@ export default function PublicationsForm({
                     // ignore
                   } }, 0);
                 }
-              }}
-            >
-              <i className="fa-solid fa-calendar-days" aria-hidden="true"></i>
-            </button>
+              }}/>
           </div>
         </label>
 

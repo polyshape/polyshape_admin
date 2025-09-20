@@ -10,13 +10,14 @@ import PublicationsListItems from "./PublicationsListItems";
 import { lastPathSegment } from "../../util/pathUtils";
 import { usePublicationsActions } from "./usePublicationsActions";
 import ListLayout from "../ListLayout";
-import LoadingOverlay from "../LoadingOverlay";
 import { joinContentForEdit } from "../../util/normalizeContent";
+import { useGlobalLoading } from "../../contexts/useGlobalLoading";
 
 const isAbortError = (e: unknown): e is DOMException =>
   e instanceof DOMException && e.name === "AbortError";
 
 export default function PublicationsList() {
+  const { startLoading, stopLoading } = useGlobalLoading();
   const [items, setItems] = useState<EnrichedItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<Set<string>>(new Set());
@@ -70,11 +71,14 @@ export default function PublicationsList() {
     setDeleting,
     setConfirmPath,
     searchQuery,
+    startLoading,
+    stopLoading,
   });
 
   useEffect(() => {
     const controller = new AbortController();
     const load = async () => {
+      startLoading();
       try {
         setError(null);
         const enriched = await fetchPublications({ signal: controller.signal });
@@ -82,11 +86,13 @@ export default function PublicationsList() {
       } catch (e: unknown) {
         if (isAbortError(e)) return;
         setError(e instanceof Error ? e.message : "Failed to load");
+      } finally {
+        stopLoading();
       }
     };
     load();
     return () => controller.abort();
-  }, []);
+  }, [startLoading, stopLoading]);
 
   const isDeleting = deleting.size > 0;
 
@@ -122,7 +128,7 @@ export default function PublicationsList() {
     />
   );
 
-  if (items === null)
+  if (items === null) {
     return (
       <>
         <PublicationsToolbar
@@ -136,10 +142,9 @@ export default function PublicationsList() {
           }}
           isDeleting={isDeleting}
         />
-        {/* Full-screen loading overlay while fetching list */}
-        <LoadingOverlay open label="Loading publications" />
       </>
     );
+  }
 
   if (error) {
     return <p style={{ color: "crimson" }}>Error: {error}</p>;
@@ -160,8 +165,6 @@ export default function PublicationsList() {
           isDeleting={isDeleting}
         />
       }
-      isDeleting={isDeleting}
-      creating={creating}
       totalPages={totalPages}
       currentPage={currentPage}
       setPage={setPage}

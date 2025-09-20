@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button } from "@polyutils/components";
 
 const TIMEOUT = 10 * 60 * 1000; // 10 minutes
 const WARNING_TIME = 1 * 60 * 1000; // show warning 1 min before logout
@@ -60,12 +61,11 @@ export default function AutoLogout() {
   return (
     <div className="auto-logout__warning" role="dialog" aria-live="polite">
       <p style={{marginTop: 5}}>You will be logged out in {countdown}s due to inactivity.</p>
-      <button
-        onClick={() => setShowWarning(false)}
-        className="btn btn-primary"
-      >
-        Stay Logged In
-      </button>
+      <Button
+        appearance="primary"
+        onClick={() => setShowWarning(false)}>
+          Stay Logged In
+        </Button>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, type Dispatch, type SetStateAction, type FormEvent } from "react";
 import { usePagination } from "@polyutils/components";
 import { fetchProjects, createProject, putProject, deleteProject, type EnrichedItem } from "../../controllers/projectsController";
 import { normalizeContent } from "../../util/normalizeContent";
@@ -18,9 +18,11 @@ type Params = {
   formPartnerUrl: string;
   editId: string | null;
   setFormError: (msg: string | null) => void;
-  setDeleting: React.Dispatch<React.SetStateAction<Set<string>>>;
+  setDeleting: Dispatch<SetStateAction<Set<string>>>;
   setConfirmPath: (v: string | null) => void;
   searchQuery: string;
+  startLoading: () => void;
+  stopLoading: () => void;
 };
 
 export function useProjectsActions({
@@ -40,6 +42,8 @@ export function useProjectsActions({
   setDeleting,
   setConfirmPath,
   searchQuery,
+  startLoading,
+  stopLoading,
 }: Params) {
   // ----- Filter + Sort -----
   const filteredSorted = useMemo(() => {
@@ -47,7 +51,7 @@ export function useProjectsActions({
     const byDate = (d?: string): number => {
       if (!d) return 0;
       const t = Date.parse(d);
-      return isNaN(t) ? 0 : t;
+      return Number.isNaN(t) ? 0 : t;
     };
     const base = [...(items ?? [])].sort(
       (a, b) => byDate(b.detail?.date) - byDate(a.detail?.date),
@@ -69,6 +73,7 @@ export function useProjectsActions({
 
   // ----- Refresh -----
   const refresh = useCallback(async () => {
+    startLoading();
     try {
       setError(null);
       setItems(null);
@@ -76,17 +81,21 @@ export function useProjectsActions({
       setItems(enriched);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to refresh");
+    } finally {
+      stopLoading();
     }
-  }, [setItems, setError]);
+  }, [setItems, setError, startLoading, stopLoading]);
 
   // ----- Create / Update -----
-  const handleProjectFormSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleProjectFormSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError(null);
     if (!formTitle || !formContent || !formDate || !formPartnerName || !formPartnerUrl) {
       setFormError("Please fill in all required fields.");
       return;
     }
+
+    startLoading();
     setCreating(true);
     try {
       const rawUrl = formPartnerUrl.trim();
@@ -123,6 +132,7 @@ export function useProjectsActions({
       resetAddForm();
     } finally {
       setCreating(false);
+      stopLoading();
     }
   }, [
     formTitle,
@@ -136,12 +146,15 @@ export function useProjectsActions({
     refresh,
     setAddOpen,
     resetAddForm,
+    startLoading,
+    stopLoading,
   ]);
 
   // ----- Delete -----
   const handleDelete = useCallback(async (pathname: string) => {
     const filename = lastPathSegment(pathname);
-    setDeleting(prev => new Set(prev).add(pathname));
+    startLoading();
+    setDeleting((prev) => new Set(prev).add(pathname));
     try {
       await deleteProject(filename);
       const refreshed = await fetchProjects();
@@ -149,14 +162,15 @@ export function useProjectsActions({
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to delete");
     } finally {
-      setDeleting(prev => {
+      setDeleting((prev) => {
         const next = new Set(prev);
         next.delete(pathname);
         return next;
       });
       setConfirmPath(null);
+      stopLoading();
     }
-  }, [setDeleting, setItems, setError, setConfirmPath]);
+  }, [setDeleting, setItems, setError, setConfirmPath, startLoading, stopLoading]);
 
   return {
     paged,
@@ -168,3 +182,5 @@ export function useProjectsActions({
     handleDelete,
   };
 }
+
+

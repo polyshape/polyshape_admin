@@ -1,3 +1,5 @@
+import { Button } from "@polyutils/components";
+
 type Props = {
   searchQuery: string;
   setSearchQuery: (v: string) => void;
@@ -16,15 +18,16 @@ export default function ProjectsToolbar({
   return (
     <div className="list-toolbar">
       <div className="toolbar-left">
-        <button
-          className="btn btn-default"
+        <Button
+          appearance="default"
+          size="medium"
+          shape="square"
           onClick={onRefresh}
           disabled={isDeleting}
-          title="Refresh projects"
-        >
-          <i className="fa-solid fa-rotate"></i>
-          <span className="label">Refresh</span>
-        </button>
+          title="Refresh projects">
+            <i className="fa-solid fa-rotate"></i>
+            <span className="label">Refresh</span>
+        </Button>
       </div>
       <div className="toolbar-search">
         <input
@@ -34,25 +37,25 @@ export default function ProjectsToolbar({
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search projects by title"
         />
-        <button
-          type="button"
-          className="icon-btn search-clear"
+        <Button
+          className="search-clear"
+          appearance="transparent"
+          size="small"
           aria-label="Clear search"
           onClick={() => setSearchQuery("")}
-          style={{ visibility: searchQuery ? "visible" : "hidden" }}
-        >
-          <i className="fa-solid fa-xmark" aria-hidden="true"></i>
-        </button>
+          style={{ visibility: searchQuery ? "visible" : "hidden" }}>
+            <i className="fa-solid fa-xmark" aria-hidden="true"></i>
+        </Button>
       </div>
       <div className="toolbar-right">
-        <button
-          className="btn btn-primary"
-          title="Add project"
-          onClick={onAdd}
-        >
-          <i className="fa-solid fa-plus"></i>
-          <span className="label">Add</span>
-        </button>
+        <Button
+          appearance="primary"
+          size="medium"
+          shape="square"
+          onClick={onAdd}>
+            <i className="fa-solid fa-plus"></i>
+            <span className="label">Add</span>
+        </Button>
       </div>
     </div>
   );

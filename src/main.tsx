@@ -3,7 +3,10 @@ import { createRoot } from "react-dom/client";
 import "./styles/index.css";
 import App from "./App.tsx";
 import { Auth0Provider } from "@auth0/auth0-react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, useSearchParams } from "react-router-dom";
+import { setup } from "@polyutils/components";
+
+setup({ useSearchParams });
 
 const domain = "dev-xqk7wpt0s1kfxmwx.us.auth0.com";
 const clientId = "Xvny4pDVfirU6pg2Wcxrp46kmXFXDVCf";

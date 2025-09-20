@@ -1,6 +1,7 @@
 import React from "react";
 import ProjectsForm from "./ProjectsForm";
 import Modal from "../Modal";
+import { Button } from "@polyutils/components";
 
 type Props = {
   open: boolean;
@@ -50,18 +51,23 @@ export default function ProjectsAddEditModal({
       className="modal--lg"
       footer={
         <>
-          <button className="btn btn-default" onClick={onCancel} disabled={creating}>
+          <Button
+            size="medium"
+            shape="square"
+            onClick={onCancel}
+            disabled={creating}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            appearance="primary"
+            size="medium"
+            shape="square"
             form="proj-form"
             type="submit"
-            className="btn btn-primary"
             disabled={creating}
-            formNoValidate
-          >
+            formNoValidate>
             Save
-          </button>
+          </Button>
         </>
       }
     >

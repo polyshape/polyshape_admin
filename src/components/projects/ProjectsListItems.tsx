@@ -1,3 +1,4 @@
+import { Button } from "@polyutils/components";
 import type { EnrichedItem } from "../../controllers/projectsController";
 import { lastPathSegment } from "../../util/pathUtils";
 
@@ -21,26 +22,30 @@ export default function ProjectsListItems({
         const d = item.detail;
         return (
           <li key={key} className="list-item proj-item">
-            <button
+            <Button
               type="button"
+              iconOnly
               className="icon-btn item-edit"
+              size="small"
+              shape="square"
+              appearance="transparent"
               aria-label="Edit project"
               title="Edit project"
               onClick={() => onEdit(item)}
-            >
-              <i className="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-            </button>
-            <button
+              icon={<i className="fa-solid fa-pen-to-square" aria-hidden="true"></i>}/>
+            <Button
               type="button"
+              iconOnly
               className="icon-btn item-trash"
+              size="small"
+              shape="square"
+              appearance="transparent"
               aria-label="Delete project"
               title="Delete project"
               onClick={() => onDeleteRequest(item.pathname)}
               aria-busy={deleting.has(item.pathname)}
               disabled={deleting.has(item.pathname)}
-            >
-              <i className="fa-solid fa-trash" aria-hidden="true"></i>
-            </button>
+              icon={<i className="fa-solid fa-trash" aria-hidden="true"></i>}/>
             <h3 className="item-pathname proj-pathname" title={item.pathname}>
               {lastPathSegment(item.pathname)}
             </h3>

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PublicationsList from "../components/publications/PublicationsList";
 import ProjectsList from "../components/projects/ProjectsList";
-import Tabs from "../components/Tabs";
+import { Tabs } from "@polyutils/components";
 import UserMenu from "../components/UserMenu";
 
 function Home() {
@@ -19,7 +19,7 @@ function Home() {
   ];
 
   return (
-    <div className="app">
+    <main className="app">
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1 className="app-title">Polyshape Admin</h1>
         <UserMenu />
@@ -29,8 +29,9 @@ function Home() {
         active={active}
         onChange={(key) => navigate(key === "projects" ? "/projects" : "/publications")}
       />
-    </div>
+    </main>
   );
 }
 
 export default Home;
+

@@ -48,6 +48,8 @@ type HookParams = {
   setDeleting: (updater: Set<string> | ((prev: Set<string>) => Set<string>)) => void;
   setConfirmPath: (v: string | null) => void;
   searchQuery: string;
+  startLoading: () => void;
+  stopLoading: () => void;
 };
 
 function renderHook(params: HookParams) {
@@ -94,6 +96,14 @@ describe("useProjectsActions", () => {
     let lastItems: EnrichedItem[] | null = [];
     let creating = false;
     let formError: string | null = null;
+    let loadingCount = 0;
+
+    const startLoading = vi.fn(() => {
+      loadingCount += 1;
+    });
+    const stopLoading = vi.fn(() => {
+      loadingCount = Math.max(0, loadingCount - 1);
+    });
 
     const params: HookParams = {
       items: [] as EnrichedItem[] | null,
@@ -132,6 +142,8 @@ describe("useProjectsActions", () => {
       }),
 
       searchQuery: "",
+      startLoading,
+      stopLoading,
     };
 
     Object.assign(params, overrides);
@@ -139,11 +151,10 @@ describe("useProjectsActions", () => {
     return {
       params,
       get state() {
-        return { deleting, confirmPath, lastError, lastItems, creating, formError };
+        return { deleting, confirmPath, lastError, lastItems, creating, formError, loadingCount };
       },
     };
   }
-
   it("filters by search and sorts by date desc via paged", async () => {
     const items: EnrichedItem[] = [
       {
@@ -433,3 +444,6 @@ describe("useProjectsActions", () => {
     unmount();
   });
 });
+
+
+
