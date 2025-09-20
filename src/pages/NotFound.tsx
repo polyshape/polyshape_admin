@@ -9,11 +9,11 @@ export default function NotFoundPage() {
       <div style={{ marginBottom: 10 }} aria-hidden="true">
         <i
           className="fa-solid fa-triangle-exclamation"
-          style={{ color: "var(--main-orange)", fontSize: 40 }}
+          style={{ color: "var(--pc-accent)", fontSize: 40 }}
         />
       </div>
       <h1 style={{ margin: "8px 0 6px", fontSize: "2.2rem" }}>Page not found</h1>
-      <p style={{ margin: 0, color: "var(--muted)", fontSize: "1.05rem" }}>
+      <p style={{ margin: 0, color: "var(--pc-muted)", fontSize: "1.05rem" }}>
         The page you're looking for doesn't exist.
       </p>
 

@@ -45,15 +45,6 @@ body {
   background: var(--card);
 }
 
-.app a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.app a:hover {
-  text-decoration: underline;
-}
-
 /* Unified list item styles for Publications + Projects */
 .list-item { display: grid; gap: 8px; position: relative; }
 .item-pathname { margin: 0; font-size: 1.05rem; }
@@ -65,7 +56,7 @@ body {
 .item-extra { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Keep specific extras if needed */
-.proj-partner a { color: var(--accent); text-decoration: none; }
+.proj-partner a { text-decoration: none; }
 .proj-partner a:hover { text-decoration: underline; }
 
 /* Icon button + trash */
@@ -75,7 +66,7 @@ body {
   height: 2rem !important;
 }
 .icon-btn:hover {
-  color: var(--text) !important;
+  color: var(--pc-fg) !important;
 }
 .item-trash { position: absolute; top: 10px; right: 12px; }
 .item-edit { position: absolute; top: 10px; right: 48px; }
@@ -104,7 +95,7 @@ body {
 .toolbar-search input[type="search"]::placeholder { color: var(--pc-muted); }
 .toolbar-search input[type="search"]:focus {
   outline: none;
-  border-color: color-mix(in oklab, var(--accent), #000 15%);
+  border-color: color-mix(in oklab, var(--pc-fg), #000 15%);
 }
 .toolbar-search .search-clear {
   position: absolute;
@@ -163,7 +154,7 @@ body {
 .modal.is-open { transform: translateY(0) scale(1); opacity: 1; }
 .modal-header { display: flex; align-items: center; }
 .modal-title { margin: 0; font-size: 1.15rem; }
-.modal-body { color: var(--text); overflow: auto; }
+.modal-body { overflow: auto; }
 .modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
 
 /* Larger form modal */
@@ -182,7 +173,7 @@ body {
   border-radius: 8px;
   border: 1px solid var(--app-border);
   background: color-mix(in oklab, var(--card), #fff 8%);
-  color: var(--text);
+  color: var(--pc-fg);
 }
 .form-grid input[type="text"]:hover,
 .form-grid input[type="url"]:hover,
@@ -204,13 +195,13 @@ body {
 .form-grid input[type="date"]::-webkit-datetime-edit-year-field,
 .form-grid input[type="date"]::-webkit-datetime-edit-month-field,
 .form-grid input[type="date"]::-webkit-datetime-edit-day-field {
-  color: var(--text);
+  color: var(--pc-fg);
 }
 .form-grid textarea { resize: vertical; }
 .form-grid input:focus,
 .form-grid textarea:focus {
   outline: none;
-  border-color: color-mix(in oklab, var(--accent), #000 15%);
+  border-color: color-mix(in oklab, var(--pc-accent), #000 15%);
 }
 
 /* Date field with custom trigger */
@@ -229,7 +220,7 @@ body {
 .user-menu { position: relative; display: flex; align-items: center; }
 .user-avatar-btn:hover { filter: brightness(1.06); }
 .user-avatar-img { width: 32px; height: 32px; border-radius: 999px; display: block; }
-.user-avatar-fallback { width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; background: var(--app-border); color: var(--text); font-weight: 600; }
+.user-avatar-fallback { width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; background: var(--app-border); color: var(--pc-fg); font-weight: 600; }
 .user-avatar-btn .user-avatar-img,
 .user-avatar-btn .user-avatar-fallback { opacity: 0.8; transition: opacity 140ms ease; }
 
