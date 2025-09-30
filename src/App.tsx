@@ -4,7 +4,7 @@ import CallbackPage from "./pages/Callback";
 import Home from "./pages/Home";
 import AutoLogout from "./components/AutoLogout";
 import NotFoundPage from "./pages/NotFound";
-import { ThemeProvider, LoadingProvider, LoadingOverlay } from "@polyutils/components";
+import { ThemeProvider, LoadingProvider, LoadingOverlay, Toast } from "@polyutils/components";
 import { GlobalLoadingProvider } from "./contexts/GlobalLoadingContext";
 
 const ProtectedHome = withAuthenticationRequired(Home, {
@@ -17,6 +17,7 @@ function App() {
       <GlobalLoadingProvider>
         <ThemeProvider initialTheme="dark">
           <LoadingOverlay />
+          <Toast />
           <AutoLogout />
           <Routes>
             <Route path="/" element={<Navigate to="/publications" replace />} />

@@ -244,14 +244,3 @@ body {
 }
 .user-dropdown.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 .user-dropdown__header { color: var(--pc-muted); font-size: 0.9rem; padding: 4px 6px; }
-
-.auto-logout__warning {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 1rem 1.5rem;
-  background: #333;
-  color: white;
-  border-radius: 8px;
-  z-index: 9999;
-}
